@@ -1,0 +1,51 @@
+package parabank;
+
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class RegistrationParaBank {
+
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stu
+		WebDriver driver=new ChromeDriver();
+		driver.get("https://parabank.parasoft.com/parabank/index.htm;jsessionid=A7E067B6280FE8019F4AB682E14B4233");
+		Thread.sleep(2000);
+		WebElement register=driver.findElement(By.xpath("//a[normalize-space()='Register']"));
+		register.click();
+		WebElement FirstName=driver.findElement(By.xpath("//input[@id='customer.firstName']"));
+		FirstName.sendKeys("asha");
+		WebElement lastName=driver.findElement(By.xpath("//input[@id='customer.lastName']"));
+		lastName.sendKeys("asha@123");
+		WebElement address=driver.findElement(By.xpath("//input[@id='customer.address.street']"));
+		address.sendKeys("attukal");
+		WebElement city=driver.findElement(By.xpath("//input[@id='customer.address.city']"));
+		city.sendKeys("trivandrum");
+		WebElement state=driver.findElement(By.xpath("//input[@id='customer.address.state']"));
+		state.sendKeys("kerala");
+		WebElement zipCode=driver.findElement(By.xpath("//input[@id='customer.address.zipCode']"));
+		zipCode.sendKeys("565346");
+		WebElement phoneNumber=driver.findElement(By.xpath("//input[@id='customer.phoneNumber']"));
+		phoneNumber.sendKeys("9876565346");
+		WebElement ssn=driver.findElement(By.xpath("//input[@id='customer.ssn']"));
+		ssn.sendKeys("9565346");
+		
+		//username
+		WebElement  username=driver.findElement(By.xpath("//input[@id='customer.username']"));
+					username.sendKeys("hei");
+					Thread.sleep(2000);
+		//password
+		WebElement password=driver.findElement(By.xpath("//input[@id='customer.password']"));
+				   password.sendKeys("Hei");
+		WebElement confirm=driver.findElement(By.xpath(" //input[@id='repeatedPassword']"));
+				   confirm.sendKeys("Hei"); 
+		WebElement reg=driver.findElement(By.xpath(" //input[@id='repeatedPassword']"));
+				Boolean d=   reg.isEnabled();
+				System.out.println(d);
+   
+			driver.quit();	
+	}
+
+}
