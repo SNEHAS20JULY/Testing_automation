@@ -18,19 +18,19 @@ public class RegistrationParaBank {
 		WebElement FirstName=driver.findElement(By.xpath("//input[@id='customer.firstName']"));
 		FirstName.sendKeys("asha");
 		WebElement lastName=driver.findElement(By.xpath("//input[@id='customer.lastName']"));
-		lastName.sendKeys("asha@123");
+		lastName.sendKeys("sdja");
 		WebElement address=driver.findElement(By.xpath("//input[@id='customer.address.street']"));
-		address.sendKeys("attukal");
+		address.sendKeys("ghash");
 		WebElement city=driver.findElement(By.xpath("//input[@id='customer.address.city']"));
-		city.sendKeys("trivandrum");
+		city.sendKeys("sjd");
 		WebElement state=driver.findElement(By.xpath("//input[@id='customer.address.state']"));
-		state.sendKeys("kerala");
+		state.sendKeys("oweijro");
 		WebElement zipCode=driver.findElement(By.xpath("//input[@id='customer.address.zipCode']"));
-		zipCode.sendKeys("565346");
+		zipCode.sendKeys("56jdk");
 		WebElement phoneNumber=driver.findElement(By.xpath("//input[@id='customer.phoneNumber']"));
-		phoneNumber.sendKeys("9876565346");
+		phoneNumber.sendKeys("wyqgedshg6");
 		WebElement ssn=driver.findElement(By.xpath("//input[@id='customer.ssn']"));
-		ssn.sendKeys("9565346");
+		ssn.sendKeys("0492");
 		
 		//username
 		WebElement  username=driver.findElement(By.xpath("//input[@id='customer.username']"));
@@ -42,8 +42,7 @@ public class RegistrationParaBank {
 		WebElement confirm=driver.findElement(By.xpath(" //input[@id='repeatedPassword']"));
 				   confirm.sendKeys("Hei"); 
 		WebElement reg=driver.findElement(By.xpath(" //input[@id='repeatedPassword']"));
-				Boolean d=   reg.isEnabled();
-				System.out.println(d);
+				
    
 			driver.quit();	
 	}
