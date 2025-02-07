@@ -1,0 +1,85 @@
+package OrangeHRM;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class OrangeHRM_REG {
+
+    // Method to safely get the cell value
+    private static String getCellValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);  // Get the cell from the row
+        if (cell == null) {
+            return "";  // If the cell is null, return an empty string
+        }
+        // Check the cell type and handle accordingly
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                return String.valueOf((int) cell.getNumericCellValue()); // Convert numeric to integer
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            default:
+                return "";  // Return empty string if the cell type is unexpected
+        }
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        // Load the Excel file
+        FileInputStream file = new FileInputStream(new File("PersonDetails.xlsx"));
+        Workbook workbook = new XSSFWorkbook(file);
+        Sheet sheet = workbook.getSheetAt(0);
+
+        // Iterate through the rows (start from row 1 to skip the header row)
+        for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+            Row row = sheet.getRow(i);
+            if (row == null) continue; // Skip any empty rows
+
+            // Read data from the row
+            String subdomain = getCellValue(row, 0);
+            String fullName = getCellValue(row, 1);
+            String email = getCellValue(row, 2);
+            String phone = getCellValue(row, 3);
+            String country = getCellValue(row, 4);
+
+            // Launch the browser and open the registration page
+            WebDriver driver = new ChromeDriver();
+            driver.get("https://www.orangehrm.com/");
+
+            // Click the 'Register Free' button
+            WebElement registerFree = driver.findElement(By.xpath("//input[@name='action_request']"));
+            registerFree.click();
+
+            // Fill in the registration form
+            Thread.sleep(2000); // Wait for the page to load
+
+            driver.findElement(By.id("Form_getForm_subdomain")).sendKeys(subdomain);
+            driver.findElement(By.id("Form_getForm_Name")).sendKeys(fullName);
+            driver.findElement(By.id("Form_getForm_Email")).sendKeys(email);
+            driver.findElement(By.id("Form_getForm_Contact")).sendKeys(phone);
+
+            WebElement countryDropdown = driver.findElement(By.id("Form_getForm_Country"));
+            countryDropdown.sendKeys(country);
+
+            // Check if the 'Submit' button is enabled
+            WebElement submitButton = driver.findElement(By.xpath("//input[@type='submit']"));
+            boolean isEnabled = submitButton.isEnabled();
+            System.out.println("Submit button enabled for " + fullName + ": " + isEnabled);
+
+            // Close the browser
+            driver.quit();
+        }
+
+        // Close resources
+        workbook.close();
+        file.close();
+    }
+}
