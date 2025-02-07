@@ -1,0 +1,117 @@
+package OrangeHRM;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.Duration;
+
+public class OrangeHRM_REG_Excel {
+
+    // Method to safely get the cell value
+    private static String getCellValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        if (cell == null) {
+            return "";
+        }
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                return String.valueOf((int) cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            default:
+                return "";
+        }
+    }
+
+    // Method to register a user
+    private static void registerUser(String subdomain, String fullName, String email, String phone, String country) {
+        WebDriver driver = null;
+
+        try {
+            // Initialize WebDriver
+            driver = new ChromeDriver();
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+            // Navigate to OrangeHRM website
+            driver.get("https://www.orangehrm.com/");
+
+            // Click on the 'Register Free' button
+            WebElement registerFree = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@name='action_request']")));
+            registerFree.click();
+
+            // Wait for the registration form to load
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Form_getForm_subdomain")));
+
+            // Fill in the registration form
+            driver.findElement(By.id("Form_getForm_subdomain")).sendKeys(subdomain);
+            driver.findElement(By.id("Form_getForm_Name")).sendKeys(fullName);
+            driver.findElement(By.id("Form_getForm_Email")).sendKeys(email);
+            driver.findElement(By.id("Form_getForm_Contact")).sendKeys(phone);
+
+            WebElement countryDropdown = driver.findElement(By.id("Form_getForm_Country"));
+            countryDropdown.sendKeys(country);
+
+            // Check if the 'Submit' button is enabled
+            WebElement submitButton = driver.findElement(By.xpath("//input[@type='submit']"));
+            boolean isEnabled = submitButton.isEnabled();
+            System.out.println("Submit button enabled for " + fullName + ": " + isEnabled);
+
+        } catch (Exception e) {
+            System.err.println("Error during registration for user " + fullName + ": " + e.getMessage());
+        } finally {
+            if (driver != null) {
+                driver.quit(); // Ensure the browser closes
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        FileInputStream file = null;
+        Workbook workbook = null;
+
+        try {
+            // Load the Excel file
+            file = new FileInputStream(new File("PersonDetails.xlsx"));
+            workbook = new XSSFWorkbook(file);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // Iterate through the rows (skip header row)
+            for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue; // Skip empty rows
+
+                // Read data from the row
+                String subdomain = getCellValue(row, 0);
+                String fullName = getCellValue(row, 1);
+                String email = getCellValue(row, 2);
+                String phone = getCellValue(row, 3);
+                String country = getCellValue(row, 4);
+
+                System.out.println("Starting registration for: " + fullName);
+                registerUser(subdomain, fullName, email, phone, country);
+                System.out.println("Registration completed for: " + fullName);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error reading the Excel file: " + e.getMessage());
+        } finally {
+            try {
+                if (workbook != null) workbook.close();
+                if (file != null) file.close();
+            } catch (IOException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
+        }
+    }
+}
